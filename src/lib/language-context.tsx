@@ -192,6 +192,8 @@ export const translations: Record<Language, Record<string, string>> = {
         "profile.saving": "Saving...",
         "profile.saveSuccess": "Profile updated successfully!",
         "profile.imageHint": "Accepts JPG, PNG\nMax file size 5MB",
+        "profile.removeImage": "Remove Profile Image",
+        "profile.changeImage": "Change Photo",
 
         // Class Center
         "class.header.title": "My Classroom",
@@ -405,6 +407,8 @@ export const translations: Record<Language, Record<string, string>> = {
         "profile.saving": "กำลังบันทึก...",
         "profile.saveSuccess": "บันทึกข้อมูลเรียบร้อยแล้ว!",
         "profile.imageHint": "รองรับไฟล์ JPG, PNG\nขนาดไม่เกิน 5MB",
+        "profile.removeImage": "ลบรูปโปรไฟล์",
+        "profile.changeImage": "เปลี่ยนรูป",
 
         // Class Center
         "class.header.title": "ห้องเรียนของฉัน",

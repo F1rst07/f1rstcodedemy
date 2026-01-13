@@ -78,12 +78,23 @@ export function LoginModal({ trigger, open: controlledOpen, onOpenChange: setCon
             });
 
             if (result?.error) {
-                if (result.error.includes("User not found")) {
+                // Debug: Log what error we're actually getting from NextAuth
+                console.log("Login error result:", JSON.stringify(result, null, 2));
+
+                // Handle custom CredentialsSignin error codes
+                // Check both result.error and result.code (NextAuth v5 may use either)
+                const errorCode = (result as any).code || result.error;
+
+                if (errorCode === "UserNotFound" || errorCode.includes?.("UserNotFound") || result.error.includes?.("UserNotFound")) {
                     setError(t("auth.error.userNotFound"));
-                } else if (result.error.includes("Invalid password")) {
+                } else if (errorCode === "InvalidPassword" || errorCode.includes?.("InvalidPassword") || result.error.includes?.("InvalidPassword")) {
                     setError(t("auth.error.incorrectPassword"));
+                } else if (errorCode === "CredentialsSignin" || errorCode === "Configuration") {
+                    setError(t("auth.error.invalidCredentials"));
                 } else {
-                    setError(result.error === "CredentialsSignin" ? t("auth.error.invalidCredentials") : result.error);
+                    // Fallback: show the actual error for debugging
+                    console.log("Unknown error code:", errorCode);
+                    setError(t("auth.error.invalidCredentials"));
                 }
             } else {
                 try {

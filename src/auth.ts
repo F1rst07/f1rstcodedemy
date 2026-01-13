@@ -1,8 +1,15 @@
-import NextAuth from "next-auth"
+import NextAuth, { CredentialsSignin } from "next-auth"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import Credentials from "next-auth/providers/credentials"
 import bcrypt from "bcryptjs"
 import { prisma } from "@/lib/prisma"
+
+class UserNotFound extends CredentialsSignin {
+    code = "UserNotFound"
+}
+class InvalidPassword extends CredentialsSignin {
+    code = "InvalidPassword"
+}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     adapter: PrismaAdapter(prisma),
@@ -32,14 +39,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
                 if (!user || !user.password) {
                     console.log("Login failed: User not found or no password set");
-                    return null;
+                    throw new UserNotFound();
                 }
 
                 const isPasswordValid = await bcrypt.compare(password, user.password)
 
                 if (!isPasswordValid) {
                     console.log("Login failed: Invalid password");
-                    return null;
+                    throw new InvalidPassword();
                 }
 
                 console.log("Login success for:", email);

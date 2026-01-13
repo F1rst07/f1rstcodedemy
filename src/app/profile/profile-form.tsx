@@ -253,7 +253,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
                                 htmlFor="image-upload"
                                 className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                             >
-                                <span className="text-white text-xs font-medium">เปลี่ยนรูป</span>
+                                <span className="text-white text-xs font-medium">{t("profile.changeImage")}</span>
                             </label>
                             <input
                                 id="image-upload"
@@ -269,7 +269,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
                                 onClick={handleRemoveImage}
                                 className="text-xs text-red-500 hover:text-red-400 font-medium transition-colors"
                             >
-                                ลบรูปโปรไฟล์
+                                {t("profile.removeImage")}
                             </button>
                         )}
                         <p className="text-xs text-gray-500 whitespace-pre-line text-center">
