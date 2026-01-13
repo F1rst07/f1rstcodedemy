@@ -199,17 +199,17 @@ export function Navbar() {
                                     <div className="px-2 py-3 border-b border-white/10 mb-2">
                                         <p className="font-bold text-white truncate">{session.user?.name || "User"}</p>
                                         <div className="flex items-center gap-2 mt-1">
-                                            <span className={`text-xs px-2 py-0.5 rounded border ${((session.user as any)?.role === 'ADMIN')
+                                            <span className={`text-xs px-2 py-0.5 rounded border ${((session.user as any)?.role?.toLowerCase() === 'admin')
                                                 ? "bg-red-500/20 text-red-500 border-red-500/30"
-                                                : ((session.user as any)?.role === 'TEACHER')
+                                                : ((session.user as any)?.role?.toLowerCase() === 'teacher' || (session.user as any)?.role?.toLowerCase() === 'instructor')
                                                     ? "bg-yellow-500/20 text-yellow-500 border-yellow-500/30"
                                                     : "bg-gray-500/20 text-gray-400 border-gray-500/30"
                                                 }`}>
                                                 {(session.user as any)?.role || "STUDENT"}
                                             </span>
-                                            <span className={`text-xs px-2 py-0.5 rounded border ${((session.user as any)?.plan === 'Pro')
+                                            <span className={`text-xs px-2 py-0.5 rounded border ${((session.user as any)?.plan?.toLowerCase() === 'pro')
                                                 ? "bg-gold-500/20 text-gold-400 border-gold-500/30"
-                                                : ((session.user as any)?.plan === 'Plus')
+                                                : ((session.user as any)?.plan?.toLowerCase() === 'plus')
                                                     ? "bg-purple-500/20 text-purple-400 border-purple-500/30"
                                                     : "bg-gray-500/20 text-gray-400 border-gray-500/30"
                                                 }`}>

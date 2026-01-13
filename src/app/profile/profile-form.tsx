@@ -218,12 +218,12 @@ export function ProfileForm({ user }: ProfileFormProps) {
             {/* Public Profile Section */}
             <div className="bg-[#161616] border border-white/10 rounded-2xl p-6 sm:p-8">
                 <div className="flex items-center gap-3 mb-6">
-                    <div className={`p-2 rounded-lg ${user.plan === 'Pro' ? 'bg-gold-500/10' :
-                        user.plan === 'Plus' ? 'bg-purple-500/10' :
+                    <div className={`p-2 rounded-lg ${user.plan?.toLowerCase() === 'pro' ? 'bg-gold-500/10' :
+                        user.plan?.toLowerCase() === 'plus' ? 'bg-purple-500/10' :
                             'bg-white/5'
                         }`}>
-                        <User className={`w-6 h-6 ${user.plan === 'Pro' ? 'text-gold-500' :
-                            user.plan === 'Plus' ? 'text-purple-400' :
+                        <User className={`w-6 h-6 ${user.plan?.toLowerCase() === 'pro' ? 'text-gold-500' :
+                            user.plan?.toLowerCase() === 'plus' ? 'text-purple-400' :
                                 'text-gray-400'
                             }`} />
                     </div>
@@ -309,8 +309,8 @@ export function ProfileForm({ user }: ProfileFormProps) {
                             <div className="space-y-2">
                                 <Label className="text-gray-300">{t("profile.membershipStatus")}</Label>
                                 <div className={`flex items-center gap-2 p-2.5 rounded-md border
-                                ${user.plan === 'Pro' ? 'bg-gold-500/10 border-gold-500/30 text-gold-500' :
-                                        user.plan === 'Plus' ? 'bg-purple-500/10 border-purple-500/30 text-purple-400' :
+                                ${user.plan?.toLowerCase() === 'pro' ? 'bg-gold-500/10 border-gold-500/30 text-gold-500' :
+                                        user.plan?.toLowerCase() === 'plus' ? 'bg-purple-500/10 border-purple-500/30 text-purple-400' :
                                             'bg-white/5 border-white/10 text-gray-400'}`}>
                                     <Crown className="w-4 h-4" />
                                     <span className="font-medium">{user.plan || "Free"}</span>
