@@ -68,19 +68,33 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     secret: process.env.AUTH_SECRET,
     trustHost: true,
     callbacks: {
-        async jwt({ token, user }) {
+        async jwt({ token, user, trigger, session }) {
+            // Updated user data from client side
+            if (trigger === "update" && session?.user) {
+                return { ...token, ...session.user };
+            }
+
+            // Initial login
             if (user) {
                 token.role = (user as any).role;
                 token.plan = (user as any).plan;
                 token.id = user.id;
-            } else if (token.sub) {
-                // Fetch fresh data from DB to ensure session is up-to-date
+            }
+
+            // Always fetch fresh data to ensure we don't have stale large cookies
+            // and to guarantee we use the API URL for images
+            if (token.sub) {
                 try {
-                    // We can use the existing prisma client
-                    // Note: We need to import prisma if not captured in closure, 
-                    // but 'prisma' is imported at top level so it's fine.
                     const freshUser = await prisma.user.findUnique({
-                        where: { id: token.sub }, // token.sub is usually the user ID
+                        where: { id: token.sub },
+                        select: {
+                            name: true,
+                            email: true,
+                            role: true,
+                            plan: true,
+                            image: true,
+                            updatedAt: true
+                        }
                     });
 
                     if (freshUser) {
@@ -89,30 +103,30 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                         token.role = freshUser.role;
                         token.plan = freshUser.plan;
 
-                        // FIX: Don't put large base64 images in the token/cookie (Causes 431 Error)
-                        // FIX: Don't put large base64 images in the token/cookie (Causes 431 Error)
-                        // FIX: Use API URL for base64 images to prevent 431 errors
+                        // CRITICAL FIX: NEVER store Base64 in token. ALWAYS use API URL for images.
+                        // This prevents HTTP 431 Request Header Fields Too Large
                         if (freshUser.image && freshUser.image.startsWith("data:")) {
-                            token.image = `/api/user/avatar/${freshUser.id}?v=${freshUser.updatedAt.getTime()}`;
+                            token.picture = `/api/user/avatar/${token.sub}?v=${freshUser.updatedAt.getTime()}`;
+                            token.image = `/api/user/avatar/${token.sub}?v=${freshUser.updatedAt.getTime()}`;
                         } else {
+                            token.picture = freshUser.image;
                             token.image = freshUser.image;
                         }
-
-                        // Remove legacy flag if present
-                        delete (token as any).isCustomImage;
                     }
                 } catch (error) {
-                    console.error("Error fetching fresh user data in JWT:", error);
+                    console.error("Error refreshing user data in JWT:", error);
                 }
             }
             return token;
         },
         async session({ session, token }) {
             if (token && session.user) {
+                session.user.id = token.sub as string;
                 (session.user as any).role = token.role as string;
                 (session.user as any).plan = token.plan as string;
-                session.user.image = token.image as string;
-                (session.user as any).isCustomImage = token.isCustomImage as boolean;
+                session.user.image = token.image as string || token.picture as string;
+                session.user.name = token.name;
+                session.user.email = token.email as string;
             }
             return session;
         },
