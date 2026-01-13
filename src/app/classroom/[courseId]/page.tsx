@@ -213,6 +213,7 @@ export default function CoursePlayerPage() {
     const [duration, setDuration] = useState(0);
     const [volume, setVolume] = useState(1);
     const [showSettings, setShowSettings] = useState(false);
+    const [showControls, setShowControls] = useState(true); // Track if controls are visible
     const [playbackSpeed, setPlaybackSpeed] = useState(1);
     const speedOptions = [0.5, 0.75, 1, 1.25, 1.5, 2];
     const [selectedQuality, setSelectedQuality] = useState("Auto");
@@ -512,7 +513,18 @@ export default function CoursePlayerPage() {
                                             style={{ transform: `scale(${videoZoom})` }}
                                             controls={false}
                                             playsInline
-                                            onClick={togglePlay}
+                                            onClick={() => {
+                                                // First click shows controls, second click toggles play
+                                                if (!showControls || !isPlaying) {
+                                                    setShowControls(true);
+                                                    // Auto-hide controls after 3 seconds if playing
+                                                    if (isPlaying) {
+                                                        setTimeout(() => setShowControls(false), 3000);
+                                                    }
+                                                } else {
+                                                    togglePlay();
+                                                }
+                                            }}
                                             onTimeUpdate={handleTimeUpdate}
                                             onLoadedMetadata={handleLoadedMetadata}
                                             onWheel={(e) => {
@@ -522,9 +534,19 @@ export default function CoursePlayerPage() {
                                             }}
                                             onEnded={() => {
                                                 setIsPlaying(false);
+                                                setShowControls(true);
                                                 if (currentLesson && !completedLessons.has(currentLesson.id)) {
                                                     setCompletedLessons(prev => new Set(prev).add(currentLesson.id));
                                                 }
+                                            }}
+                                            onPlay={() => {
+                                                setIsPlaying(true);
+                                                // Auto-hide controls after 3 seconds when playing
+                                                setTimeout(() => setShowControls(false), 3000);
+                                            }}
+                                            onPause={() => {
+                                                setIsPlaying(false);
+                                                setShowControls(true);
                                             }}
                                         />
                                     )
@@ -542,21 +564,21 @@ export default function CoursePlayerPage() {
 
                             {/* Center Play Button (Visible on Pause) */}
                             <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-                                <div className={`w-24 h-24 rounded-full bg-black/40 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white transition-all transform duration-300 shadow-2xl ${isPlaying ? 'opacity-0 scale-110 pointer-events-none' : 'opacity-100 scale-100 pointer-events-auto'}`}>
+                                <div className={`w-14 h-14 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full bg-black/40 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white transition-all transform duration-300 shadow-2xl ${isPlaying ? 'opacity-0 scale-110 pointer-events-none' : 'opacity-100 scale-100 pointer-events-auto'}`}>
                                     <button onClick={togglePlay} className="pointer-events-auto w-full h-full flex items-center justify-center rounded-full">
                                         {isPlaying ? (
-                                            <Pause className="w-10 h-10 fill-current ml-1" />
+                                            <Pause className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 fill-current ml-0.5 sm:ml-1" />
                                         ) : (
-                                            <Play className="w-10 h-10 fill-current ml-1" />
+                                            <Play className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 fill-current ml-0.5 sm:ml-1" />
                                         )}
                                     </button>
                                 </div>
                             </div>
 
                             {/* Controls Overlay */}
-                            <div className={`absolute bottom-0 left-0 right-0 z-30 bg-gradient-to-t from-black via-black/80 to-transparent px-4 pb-4 pt-16 transition-all duration-300 ${isPlaying ? 'opacity-0 group-hover:opacity-100' : 'opacity-100'}`}>
+                            <div className={`absolute bottom-0 left-0 right-0 z-30 bg-gradient-to-t from-black via-black/60 to-transparent px-2 sm:px-4 pb-1.5 sm:pb-3 pt-6 sm:pt-12 transition-all duration-300 ${showControls || !isPlaying ? 'opacity-100' : 'opacity-0'}`}>
                                 {/* Progress Bar */}
-                                <div className="relative group/progress mb-4 cursor-pointer">
+                                <div className="relative group/progress mb-2 sm:mb-3 cursor-pointer">
                                     {/* Seek Input */}
                                     <input
                                         type="range"
@@ -644,8 +666,7 @@ export default function CoursePlayerPage() {
                                         </div>
 
                                         <div className="text-[10px] sm:text-sm font-medium text-white ml-1 sm:ml-2 select-none whitespace-nowrap">
-                                            <span className="hidden xs:inline">{formatTime(currentTime)} / </span>
-                                            {formatTime(duration || 0)}
+                                            {formatTime(currentTime)} / {formatTime(duration || 0)}
                                         </div>
                                     </div>
 
@@ -675,7 +696,7 @@ export default function CoursePlayerPage() {
                                                 title="Settings"
                                                 onClick={() => setShowSettings(!showSettings)}
                                             >
-                                                <Settings2 className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
+                                                <Settings2 className="w-4 h-4 sm:w-5 sm:h-5 stroke-[1.5]" />
                                             </button>
 
                                             {/* Settings Dropdown */}
@@ -769,16 +790,32 @@ export default function CoursePlayerPage() {
                                             title="Fullscreen"
                                             onClick={() => {
                                                 const videoContainer = document.querySelector('.aspect-video');
-                                                if (videoContainer) {
-                                                    if (document.fullscreenElement) {
+                                                const video = videoRef.current;
+
+                                                // Check if already fullscreen
+                                                if (document.fullscreenElement || (document as any).webkitFullscreenElement) {
+                                                    if (document.exitFullscreen) {
                                                         document.exitFullscreen();
-                                                    } else {
+                                                    } else if ((document as any).webkitExitFullscreen) {
+                                                        (document as any).webkitExitFullscreen();
+                                                    }
+                                                } else {
+                                                    // Try container fullscreen first (for controls)
+                                                    if (videoContainer?.requestFullscreen) {
                                                         videoContainer.requestFullscreen();
+                                                    } else if ((videoContainer as any)?.webkitRequestFullscreen) {
+                                                        (videoContainer as any).webkitRequestFullscreen();
+                                                    }
+                                                    // Fallback to video element fullscreen (iOS Safari)
+                                                    else if (video && (video as any).webkitEnterFullscreen) {
+                                                        (video as any).webkitEnterFullscreen();
+                                                    } else if (video && (video as any).webkitRequestFullScreen) {
+                                                        (video as any).webkitRequestFullScreen();
                                                     }
                                                 }
                                             }}
                                         >
-                                            <Maximize className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
+                                            <Maximize className="w-4 h-4 sm:w-5 sm:h-5 stroke-[1.5]" />
                                         </button>
                                     </div>
                                 </div>
