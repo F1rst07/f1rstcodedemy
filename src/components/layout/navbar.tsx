@@ -15,7 +15,7 @@ import {
 import { useState, useEffect } from "react";
 import { RegisterModal } from "@/components/auth/register-modal";
 import { LoginModal } from "@/components/auth/login-modal";
-import { motion } from "framer-motion";
+// Removed framer-motion - using CSS transitions instead
 
 import { useLanguage } from "@/lib/language-context";
 
@@ -276,14 +276,11 @@ export function Navbar() {
                                 onSwitchToLogin={switchToLogin}
                                 trigger={
                                     <div className="cursor-pointer">
-                                        <motion.div
-                                            whileHover={{ scale: 1.02 }}
-                                            whileTap={{ scale: 0.98 }}
-                                        >
+                                        <div className="hover:scale-[1.02] active:scale-[0.98] transition-transform duration-150">
                                             <Button className="bg-gold-500 hover:bg-gold-400 text-black font-bold text-base h-11 px-6 rounded-xl shadow-[0_0_15px_rgba(245,158,11,0.2)] hover:shadow-[0_0_20px_rgba(245,158,11,0.4)] transition-all duration-300">
                                                 {t("nav.register")}
                                             </Button>
-                                        </motion.div>
+                                        </div>
                                     </div>
                                 }
                             />
@@ -305,11 +302,8 @@ export function Navbar() {
             {/* Mobile Menu Panel */}
             {
                 mobileMenuOpen && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        className="md:hidden absolute top-full left-0 right-0 max-h-[calc(100vh-4rem)] overflow-y-auto bg-black/95 backdrop-blur-md border-t border-white/10 p-4"
+                    <div
+                        className="md:hidden absolute top-full left-0 right-0 max-h-[calc(100vh-4rem)] overflow-y-auto bg-black/95 backdrop-blur-md border-t border-white/10 p-4 animate-fade-in-up"
                     >
                         <div className="flex flex-col landscape:grid landscape:grid-cols-2 gap-3 sm:gap-4">
                             <div className="flex flex-col gap-2">
@@ -384,7 +378,7 @@ export function Navbar() {
                                 )}
                             </div>
                         </div>
-                    </motion.div>
+                    </div>
                 )
             }
         </nav >
