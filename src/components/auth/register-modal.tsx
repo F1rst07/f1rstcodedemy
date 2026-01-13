@@ -107,7 +107,7 @@ export function RegisterModal({ trigger, open: controlledOpen, onOpenChange: set
             }
 
             if (!res.ok) {
-                throw new Error(data.message || "Something went wrong");
+                throw new Error(data.message || t("auth.error.generic"));
             }
 
             setIsSuccess(true);
@@ -140,8 +140,8 @@ export function RegisterModal({ trigger, open: controlledOpen, onOpenChange: set
                         <div className="w-12 h-12 sm:w-16 sm:h-16 bg-green-500/10 rounded-full flex items-center justify-center mb-2">
                             <CheckCircle className="w-6 h-6 sm:w-8 sm:h-8 text-green-500" />
                         </div>
-                        <h3 className="text-xl sm:text-2xl font-bold text-white">Welcome, {formData.name || "Student"}!</h3>
-                        <p className="text-sm sm:text-base text-gray-400">Your account has been created successfully.</p>
+                        <h3 className="text-xl sm:text-2xl font-bold text-white">{t("auth.welcome")} {formData.name || "Student"}!</h3>
+                        <p className="text-sm sm:text-base text-gray-400">{t("auth.register.successDesc")}</p>
                     </div>
                 ) : (
                     <div className="p-4 sm:p-6 md:p-8">
@@ -242,7 +242,7 @@ export function RegisterModal({ trigger, open: controlledOpen, onOpenChange: set
                                 {isLoading ? (
                                     <>
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        Creating Account...
+                                        {t("auth.register.creating")}
                                     </>
                                 ) : (
                                     t("auth.submit")

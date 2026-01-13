@@ -79,11 +79,11 @@ export function LoginModal({ trigger, open: controlledOpen, onOpenChange: setCon
 
             if (result?.error) {
                 if (result.error.includes("User not found")) {
-                    setError("User not found");
+                    setError(t("auth.error.userNotFound"));
                 } else if (result.error.includes("Invalid password")) {
-                    setError("Incorrect password");
+                    setError(t("auth.error.incorrectPassword"));
                 } else {
-                    setError(result.error === "CredentialsSignin" ? "Invalid email or password" : result.error);
+                    setError(result.error === "CredentialsSignin" ? t("auth.error.invalidCredentials") : result.error);
                 }
             } else {
                 try {
@@ -111,7 +111,7 @@ export function LoginModal({ trigger, open: controlledOpen, onOpenChange: setCon
                 }, 2000);
             }
         } catch (err) {
-            setError("Something went wrong");
+            setError(t("auth.error.generic"));
         } finally {
             setIsLoading(false);
         }
@@ -142,7 +142,7 @@ export function LoginModal({ trigger, open: controlledOpen, onOpenChange: setCon
             const data = await res.json();
 
             if (!res.ok) {
-                throw new Error(data.message || "Failed to reset password");
+                throw new Error(data.message || t("auth.error.generic"));
             }
 
             setForgotSuccess(true);
@@ -269,8 +269,8 @@ export function LoginModal({ trigger, open: controlledOpen, onOpenChange: setCon
                             <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gold-500/10 rounded-full flex items-center justify-center mb-2">
                                 <CheckCircle className="w-6 h-6 sm:w-8 sm:h-8 text-gold-500" />
                             </div>
-                            <h3 className="text-xl sm:text-2xl font-bold text-white">Welcome! {userName || "User"}</h3>
-                            <p className="text-sm sm:text-base text-gray-400">You have successfully logged in.</p>
+                            <h3 className="text-xl sm:text-2xl font-bold text-white">{t("auth.welcome")} {userName || "User"}</h3>
+                            <p className="text-sm sm:text-base text-gray-400">{t("auth.loginSuccess")}</p>
                         </div>
                     ) : (
                         <div className="p-4 sm:p-6 md:p-8">
@@ -356,7 +356,7 @@ export function LoginModal({ trigger, open: controlledOpen, onOpenChange: setCon
                                     {isLoading ? (
                                         <>
                                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                            Logging in...
+                                            {t("auth.loggingIn")}
                                         </>
                                     ) : (
                                         t("auth.loginSubmit")

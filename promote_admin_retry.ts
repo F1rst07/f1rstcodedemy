@@ -20,9 +20,12 @@ async function main() {
 
             await prisma.user.update({
                 where: { email },
-                data: { role: "ADMIN" }
+                data: {
+                    role: "ADMIN",
+                    plan: "PRO"
+                }
             });
-            console.log(`✅ Successfully promoted ${email} to ADMIN`);
+            console.log(`✅ Successfully promoted ${email} to ADMIN and upgraded to PRO plan`);
             updated = true;
             break;
         }
