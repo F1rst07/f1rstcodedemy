@@ -48,8 +48,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     id: user.id,
                     name: user.name,
                     email: user.email,
-                    // FIX: Map Base64 image to API URL immediately
-                    image: (user.image && user.image.startsWith("data:")) ? `/api/user/avatar/${user.id}` : user.image,
+                    // FIX: Map Base64 image to API URL immediately with cache busting
+                    image: (user.image && user.image.startsWith("data:"))
+                        ? `/api/user/avatar/${user.id}?v=${user.updatedAt.getTime()}`
+                        : user.image,
                     role: user.role,
                     plan: user.plan,
                 }
@@ -84,7 +86,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                         // FIX: Don't put large base64 images in the token/cookie (Causes 431 Error)
                         // FIX: Use API URL for base64 images to prevent 431 errors
                         if (freshUser.image && freshUser.image.startsWith("data:")) {
-                            token.image = `/api/user/avatar/${freshUser.id}`;
+                            token.image = `/api/user/avatar/${freshUser.id}?v=${freshUser.updatedAt.getTime()}`;
                         } else {
                             token.image = freshUser.image;
                         }
