@@ -592,37 +592,37 @@ export default function CoursePlayerPage() {
                                 {/* Control Buttons */}
                                 <div className="flex items-center justify-between font-sans">
                                     {/* Left Side */}
-                                    <div className="flex items-center gap-4 sm:gap-6">
+                                    <div className="flex items-center gap-2 sm:gap-4 md:gap-6">
                                         <button
                                             onClick={togglePlay}
                                             className="text-white hover:text-gray-200 transition-colors transform active:scale-95"
                                         >
                                             {isPlaying ? (
-                                                <Pause className="w-6 h-6 fill-white stroke-none" />
+                                                <Pause className="w-5 h-5 sm:w-6 sm:h-6 fill-white stroke-none" />
                                             ) : (
-                                                <Play className="w-6 h-6 fill-white stroke-none" />
+                                                <Play className="w-5 h-5 sm:w-6 sm:h-6 fill-white stroke-none" />
                                             )}
                                         </button>
 
-                                        <div className="flex items-center gap-2 text-white font-bold text-sm">
-                                            <button onClick={() => skipTime(-10)} className="group/skip flex items-center gap-1 hover:text-gray-200 transition-colors" title="Rewind 10s">
-                                                <ChevronsLeft className="w-6 h-6 stroke-[3]" />
-                                                <span>10</span>
+                                        <div className="flex items-center gap-1 sm:gap-2 text-white font-bold text-xs sm:text-sm">
+                                            <button onClick={() => skipTime(-10)} className="group/skip flex items-center gap-0.5 sm:gap-1 hover:text-gray-200 transition-colors" title="Rewind 10s">
+                                                <ChevronsLeft className="w-4 h-4 sm:w-6 sm:h-6 stroke-[3]" />
+                                                <span className="hidden xs:inline">10</span>
                                             </button>
-                                            <button onClick={() => skipTime(10)} className="group/skip flex items-center gap-1 hover:text-gray-200 transition-colors" title="Forward 10s">
-                                                <span>10</span>
-                                                <ChevronsRight className="w-6 h-6 stroke-[3]" />
+                                            <button onClick={() => skipTime(10)} className="group/skip flex items-center gap-0.5 sm:gap-1 hover:text-gray-200 transition-colors" title="Forward 10s">
+                                                <span className="hidden xs:inline">10</span>
+                                                <ChevronsRight className="w-4 h-4 sm:w-6 sm:h-6 stroke-[3]" />
                                             </button>
                                         </div>
 
-                                        {/* Volume Control */}
-                                        <div className="flex items-center gap-3 group/volume cursor-pointer relative">
+                                        {/* Volume Control - Hidden on mobile */}
+                                        <div className="hidden sm:flex items-center gap-3 group/volume cursor-pointer relative">
                                             <button
                                                 className="text-white hover:text-gray-200 transition-colors focus:outline-none focus:scale-110 active:scale-95"
                                                 onClick={() => handleVolumeChange(volume === 0 ? 1 : 0)}
                                                 onKeyDown={handleVolumeKeyDown}
                                             >
-                                                {volume === 0 ? <VolumeX className="w-6 h-6 stroke-[2.5]" /> : <Volume2 className="w-6 h-6 stroke-[2.5]" />}
+                                                {volume === 0 ? <VolumeX className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]" /> : <Volume2 className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]" />}
                                             </button>
                                             <div className="w-0 overflow-hidden group-hover/volume:w-24 transition-all duration-300 ease-out flex items-center">
                                                 <div className="w-20 h-1.5 bg-white/30 rounded-full relative flex items-center ml-2">
@@ -643,15 +643,17 @@ export default function CoursePlayerPage() {
                                             </div>
                                         </div>
 
-                                        <div className="text-sm font-medium text-white ml-2 select-none">
-                                            {formatTime(currentTime)} / {formatTime(duration || 0)}
+                                        <div className="text-[10px] sm:text-sm font-medium text-white ml-1 sm:ml-2 select-none whitespace-nowrap">
+                                            <span className="hidden xs:inline">{formatTime(currentTime)} / </span>
+                                            {formatTime(duration || 0)}
                                         </div>
                                     </div>
 
                                     {/* Right Side */}
-                                    <div className="flex items-center gap-4">
+                                    <div className="flex items-center gap-2 sm:gap-4">
+                                        {/* PiP - Hidden on mobile */}
                                         <button
-                                            className="text-white hover:text-gray-200 transition-colors"
+                                            className="hidden sm:block text-white hover:text-gray-200 transition-colors"
                                             title="Picture in Picture"
                                             onClick={async () => {
                                                 if (videoRef.current) {
@@ -663,7 +665,7 @@ export default function CoursePlayerPage() {
                                                 }
                                             }}
                                         >
-                                            <PictureInPicture2 className="w-6 h-6 stroke-[2]" />
+                                            <PictureInPicture2 className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
                                         </button>
 
                                         {/* Settings Menu */}
@@ -673,23 +675,23 @@ export default function CoursePlayerPage() {
                                                 title="Settings"
                                                 onClick={() => setShowSettings(!showSettings)}
                                             >
-                                                <Settings2 className="w-6 h-6 stroke-[2]" />
+                                                <Settings2 className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
                                             </button>
 
                                             {/* Settings Dropdown */}
                                             {showSettings && (
-                                                <div className="absolute bottom-full right-0 mb-2 w-56 bg-[#2a2a2a] border border-white/10 rounded-lg shadow-xl overflow-hidden z-50">
+                                                <div className="absolute bottom-full right-0 mb-2 w-48 sm:w-56 bg-[#2a2a2a] border border-white/10 rounded-lg shadow-xl overflow-hidden z-50">
                                                     {/* Playback Speed */}
-                                                    <div className="px-4 py-3 hover:bg-white/5 cursor-pointer border-b border-white/10">
+                                                    <div className="px-3 sm:px-4 py-2 sm:py-3 hover:bg-white/5 cursor-pointer border-b border-white/10">
                                                         <div className="flex items-center justify-between">
-                                                            <span className="text-sm text-white font-medium">Playback Speed</span>
+                                                            <span className="text-xs sm:text-sm text-white font-medium">Speed</span>
                                                             <div className="flex items-center gap-1">
-                                                                <span className="text-sm text-gray-300">{playbackSpeed}x</span>
-                                                                <ChevronRight className="w-4 h-4 text-gray-400" />
+                                                                <span className="text-xs sm:text-sm text-gray-300">{playbackSpeed}x</span>
+                                                                <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
                                                             </div>
                                                         </div>
                                                         {/* Speed Options */}
-                                                        <div className="flex flex-wrap gap-2 mt-2">
+                                                        <div className="flex flex-wrap gap-1 sm:gap-2 mt-2">
                                                             {speedOptions.map((speed) => (
                                                                 <button
                                                                     key={speed}
@@ -699,7 +701,7 @@ export default function CoursePlayerPage() {
                                                                             videoRef.current.playbackRate = speed;
                                                                         }
                                                                     }}
-                                                                    className={`px-2 py-1 text-xs rounded ${playbackSpeed === speed
+                                                                    className={`px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded ${playbackSpeed === speed
                                                                         ? 'bg-[#FFB800] text-black font-bold'
                                                                         : 'bg-white/10 text-white hover:bg-white/20'
                                                                         }`}
@@ -710,19 +712,19 @@ export default function CoursePlayerPage() {
                                                         </div>
                                                     </div>
                                                     {/* Quality */}
-                                                    <div className="px-4 py-3 hover:bg-white/5 cursor-pointer">
+                                                    <div className="px-3 sm:px-4 py-2 sm:py-3 hover:bg-white/5 cursor-pointer">
                                                         <div className="flex items-center justify-between">
-                                                            <span className="text-sm text-white font-medium">Quality</span>
+                                                            <span className="text-xs sm:text-sm text-white font-medium">Quality</span>
                                                             <div className="flex items-center gap-1">
-                                                                <span className="text-sm text-gray-300">{selectedQuality}</span>
-                                                                <ChevronRight className="w-4 h-4 text-gray-400" />
+                                                                <span className="text-xs sm:text-sm text-gray-300">{selectedQuality}</span>
+                                                                <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
                                                             </div>
                                                         </div>
                                                         {/* Quality Options */}
-                                                        <div className="flex flex-wrap gap-2 mt-2">
+                                                        <div className="flex flex-wrap gap-1 sm:gap-2 mt-2">
                                                             <button
                                                                 onClick={() => changeHlsQuality("Auto")}
-                                                                className={`px-2 py-1 text-xs rounded ${selectedQuality === "Auto"
+                                                                className={`px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded ${selectedQuality === "Auto"
                                                                     ? 'bg-[#FFB800] text-black font-bold'
                                                                     : 'bg-white/10 text-white hover:bg-white/20'
                                                                     }`}
@@ -734,7 +736,7 @@ export default function CoursePlayerPage() {
                                                                     <button
                                                                         key={level.height}
                                                                         onClick={() => changeHlsQuality(`${level.height}p`)}
-                                                                        className={`px-2 py-1 text-xs rounded ${selectedQuality === `${level.height}p`
+                                                                        className={`px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded ${selectedQuality === `${level.height}p`
                                                                             ? 'bg-[#FFB800] text-black font-bold'
                                                                             : 'bg-white/10 text-white hover:bg-white/20'
                                                                             }`}
@@ -747,7 +749,7 @@ export default function CoursePlayerPage() {
                                                                     <button
                                                                         key={quality}
                                                                         onClick={() => setSelectedQuality(quality)}
-                                                                        className={`px-2 py-1 text-xs rounded ${selectedQuality === quality
+                                                                        className={`px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded ${selectedQuality === quality
                                                                             ? 'bg-[#FFB800] text-black font-bold'
                                                                             : 'bg-white/10 text-white hover:bg-white/20'
                                                                             }`}
@@ -776,7 +778,7 @@ export default function CoursePlayerPage() {
                                                 }
                                             }}
                                         >
-                                            <Maximize className="w-6 h-6 stroke-[2]" />
+                                            <Maximize className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
                                         </button>
                                     </div>
                                 </div>
