@@ -10,7 +10,8 @@ import { Footer } from "@/components/layout/footer";
 const outfit = Outfit({
   subsets: ["latin"],
   variable: "--font-outfit",
-  weight: ["300", "400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap", // Show fallback font immediately, swap when loaded
 });
 
 export const metadata: Metadata = {
