@@ -1,0 +1,434 @@
+"use client";
+
+import React, { createContext, useContext, useState, useEffect } from "react";
+
+type Language = "TH" | "EN";
+
+interface LanguageContextType {
+    language: Language;
+    setLanguage: (lang: Language) => void;
+    t: (key: string) => string;
+}
+
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+
+export const translations: Record<Language, Record<string, string>> = {
+    EN: {
+        // Navbar
+        "nav.home": "Home",
+        "nav.courses": "All Courses",
+        "nav.membership": "Articles",
+        "nav.classcenter": "Classroom",
+        "nav.login": "Login",
+        "nav.register": "Register",
+        "nav.settings": "Settings",
+        "nav.logout": "Logout",
+        "nav.profile": "Profile",
+        "nav.orderStatus": "Check Order Status",
+        "nav.paymentNotify": "Payment Notification",
+        "nav.editProfile": "Edit User Info",
+        "nav.subscribe": "Subscribe to Membership",
+
+        // Pricing
+        "pricing.title": "Choose Your Learning Journey",
+        "pricing.subtitle": "Unlock your potential with our flexible membership plans.",
+        "pricing.free": "Free",
+        "pricing.plus": "Plus",
+        "pricing.pro": "Pro",
+        "pricing.month": "/month",
+        "pricing.feature.allCourses": "Access all courses",
+        "pricing.feature.cert": "Certificates of completion",
+        "pricing.feature.mentor": "1-on-1 Mentorship",
+        "pricing.feature.offline": "Offline downloads",
+        "pricing.feature.community": "Community access",
+        "pricing.select": "Select Plan",
+        "pricing.current": "Current Plan",
+
+        // Hero
+        "hero.badge": "The Future of Computer Learning",
+        "hero.subtitle": "Computer courses designed comprehensively to cover all essential skills,",
+        "hero.master": " from beginner basics to expert level mastery.",
+        "hero.start": "Enter Lessons",
+        "hero.trailer": "Instructor Profile",
+
+        // Features
+        "feature.courses": "Courses",
+        "feature.courses.desc": "Computer science courses covering all skills, suitable for learners of all levels.",
+        "feature.paths": "Learning Paths",
+        "feature.paths.desc": "Structured roadmaps to guide you from beginner to job-ready professional.",
+        "feature.community": "Membership",
+        "feature.community.desc": "Choose Free / Plus / Pro plans to unlock courses and benefits suitable for you.",
+
+        // Recommended
+        "rec.title": "Recommended Lessons",
+        "rec.viewAll": "View All",
+        "rec.beginner": "Beginner",
+        "rec.intermediate": "Expert",
+        "rec.advanced": "Professional",
+        "rec.min": "min",
+        "rec.lastUpdated": "Last updated",
+
+        // CTA
+        "cta.title": "Ready to start your computer learning journey?",
+        "cta.desc": "Turn your passion for computers into future skills. Learn with quality courses, hands-on practice, and guidance from professional instructors at F1RSTCODE DEMY.",
+        "cta.button": "Start Learning For Free",
+
+        // Auth
+        "auth.createAccount": "Create Account",
+        "auth.name": "Name",
+        "auth.email": "Email",
+        "auth.password": "Password",
+        "auth.confirmPassword": "Confirm Password",
+        "auth.submit": "Create Account",
+        "auth.loginSubmit": "Login",
+        "auth.haveAccount": "Already have an account?",
+        "auth.noAccount": "Don't have an account?",
+        "auth.forgotPassword": "Forgot Password?",
+        "auth.placeholder.name": "Please enter your name",
+        "auth.placeholder.email": "Please enter your email",
+        "auth.placeholder.password": "Please enter your password (more than 6 characters)",
+        "auth.placeholder.confirmPassword": "Please confirm your password",
+        "auth.error.nameRequired": "Please enter your name",
+        "auth.error.emailRequired": "Please enter your email",
+        "auth.error.emailInvalid": "Please enter a valid email address",
+        "auth.error.passwordRequired": "Please enter your password",
+        "auth.error.passwordTooShort": "Password must be more than 6 characters",
+        "auth.error.confirmPasswordRequired": "Please confirm your password",
+        "auth.error.passwordMismatch": "Passwords do not match",
+        "auth.rememberMe": "Remember me",
+
+        // Footer
+        "footer.desc": "The premium online learning platform for future learners. Master the skills that matter with F1RSTCODE DEMY.",
+        "footer.learn": "Learn",
+        "footer.free": "Free Courses",
+        "footer.plus": "Plus Courses",
+        "footer.pro": "Pro Courses",
+        "footer.support": "Support",
+        "footer.faq": "FAQ",
+        "footer.contact": "Contact Us",
+        "footer.terms": "Terms of Service",
+        "footer.privacy": "Privacy Policy",
+        "footer.connect": "Connect",
+        "footer.subscribe": "Subscribe",
+        "footer.rights": "All rights reserved.",
+        "footer.madeWith": "Made with KRU'F1RSTz",
+
+        // Order Status
+        "order.title": "Check Order Status",
+        "order.subtitle": "View your order status and history",
+        "order.orderId": "Order ID",
+        "order.date": "Date",
+        "order.status": "Status",
+        "order.total": "Total",
+        "order.actions": "Actions",
+        "order.items": "items",
+        "order.item": "item",
+        "order.viewDetails": "View Details",
+        "order.notifyPayment": "Notify Payment",
+        "order.pendingPayment": "Pending Payment",
+        "order.completed": "Completed",
+        "order.processing": "Processing",
+        "order.cancelled": "Cancelled",
+
+        // Payment
+        "payment.title": "Payment Notification",
+        "payment.formTitle": "Notify Payment",
+        "payment.name": "Name",
+        "payment.phone": "Phone Number",
+        "payment.email": "Email",
+        "payment.orderId": "Order ID",
+        "payment.amount": "Amount",
+        "payment.details": "Order Details",
+        "payment.detailsPlaceholder": "Additional details (if any)",
+        "payment.bank": "Bank Account",
+        "payment.ktb": "Krungthai Bank",
+        "payment.promptpay": "Pay via PromptPay",
+        "payment.accountNo": "Account No:",
+        "payment.slip": "Transfer Slip",
+        "payment.uploadClick": "Click to upload",
+        "payment.uploadDrag": "or drag and drop",
+        "payment.date": "Transfer Date",
+        "payment.time": "Time",
+        "payment.submit": "Notify Payment",
+        "payment.channelTitle": "Payment Channels",
+        "payment.channelDesc": "You can pay by bank transfer or scan the PromptPay QR Code. After payment, please attach the slip as proof.",
+        "payment.bankChannel": "Bank Transfer",
+        "payment.promptpayChannel": "PromptPay",
+        "payment.scanQR": "Scan QR Code to pay",
+        "payment.promptpayNo": "PromptPay Number:",
+        "payment.warning": "*Payment via True Money Wallet is not accepted as the system cannot verify the transaction correctly.",
+
+        // Profile
+        "profile.title": "Account Settings",
+        "profile.subtitle": "Manage your personal information and account security",
+        "profile.publicInfo": "Personal Information",
+        "profile.publicInfoDesc": "Information displayed on your profile",
+        "profile.email": "Email (cannot be changed)",
+        "profile.displayName": "Display Name",
+        "profile.membershipStatus": "Membership Status",
+        "profile.role": "Role",
+        "profile.changePassword": "Change Password",
+        "profile.changePasswordDesc": "Update your password for security (leave blank if you don't want to change)",
+        "profile.currentPassword": "Current Password",
+        "profile.newPassword": "New Password",
+        "profile.confirmPassword": "Confirm New Password",
+        "profile.saveChanges": "Save Changes",
+        "profile.cancel": "Cancel",
+        "profile.saving": "Saving...",
+        "profile.saveSuccess": "Profile updated successfully!",
+        "profile.imageHint": "Accepts JPG, PNG\nMax file size 5MB",
+
+        // Class Center
+        "class.header.title": "My Classroom",
+        "class.header.subtitle": "Access lessons in your registered courses",
+        "class.search.placeholder": "Search your courses...",
+        "class.search.button": "Search Course",
+        "class.search.clear": "Clear Search",
+        "class.tabs.all": "All",
+        "class.tabs.learning": "In Progress",
+        "class.tabs.notStarted": "Not Started",
+        "class.tabs.expired": "Expired Courses",
+        "class.card.lessons": "Lessons",
+        "class.card.timeLeft": "Time Left",
+        "class.card.totalTime": "Total Time",
+        "class.card.expiry": "Expires",
+        "class.btn.start": "Continue Learning",
+        "class.btn.renew": "Renew",
+        "class.card.progress": "Progress",
+        "class.unit.hours": "hrs",
+
+        // Classroom
+        "classroom.back": "Back to Classroom",
+        "classroom.admin": "Admin Management",
+        "classroom.prev": "Previous Lesson",
+        "classroom.next": "Next Lesson",
+        "classroom.markComplete": "Mark as Completed",
+        "classroom.completed": "Completed",
+        "classroom.details": "Lesson Details",
+        "classroom.progress.title": "Progress",
+        "classroom.progress.completed": "Completed Lessons",
+        "classroom.progress.timeLeft": "Time Remaining",
+        "classroom.curriculum.title": "Course Content",
+        "classroom.ask": "Ask Questions / Mentorship",
+    },
+    TH: {
+        // Navbar
+        "nav.home": "หน้าแรก",
+        "nav.courses": "คอร์สทั้งหมด",
+        "nav.membership": "บทความ",
+        "nav.classcenter": "ห้องเรียน",
+        "nav.login": "เข้าสู่ระบบ",
+        "nav.register": "สมัครสมาชิก",
+        "nav.settings": "ตั้งค่า",
+        "nav.logout": "ออกจากระบบ",
+        "nav.profile": "โปรไฟล์",
+        "nav.orderStatus": "ตรวจสอบสถานะคำสั่งซื้อ",
+        "nav.paymentNotify": "แจ้งชำระเงินค่าบริการ",
+        "nav.editProfile": "แก้ไขข้อมูลผู้ใช้งาน",
+        "nav.subscribe": "สมัครแพ็คเกจสมาชิก",
+
+        // Pricing
+        "pricing.title": "เลือกเส้นทางการเรียนรู้ของคุณ",
+        "pricing.subtitle": "ปลดล็อกศักยภาพด้วยแพ็คเกจสมาชิกที่ยืดหยุ่น",
+        "pricing.free": "ฟรี",
+        "pricing.plus": "พลัส",
+        "pricing.pro": "โปร",
+        "pricing.month": "/เดือน",
+        "pricing.feature.allCourses": "เข้าถึงทุกคอร์สเรียน",
+        "pricing.feature.cert": "ใบรับรองเมื่อเรียนจบ",
+        "pricing.feature.mentor": "ปรึกษาผู้สอนแบบส่วนตัว",
+        "pricing.feature.offline": "ดาวน์โหลดเรียนออฟไลน์",
+        "pricing.feature.community": "เข้าถึงคอมมูนิตี้",
+        "pricing.select": "เลือกแพ็คเกจ",
+        "pricing.current": "แพ็คเกจปัจจุบัน",
+
+        // Hero
+        "hero.badge": "อนาคตของการเรียนรู้วิชาคอมพิวเตอร์",
+        "hero.subtitle": "คอร์สเรียนรู้ด้านวิชาคอมพิวเตอร์ ที่ออกแบบมาอย่างครบถ้วน ครอบคลุมทุกทักษะสำคัญ",
+        "hero.master": " ตั้งแต่พื้นฐานสำหรับผู้เรียนเริ่มต้น ไปจนถึงระดับเชี่ยวชาญ",
+        "hero.start": "เข้าสู่บทเรียน",
+        "hero.trailer": "ประวัติผู้สอน",
+
+        // Features
+        "feature.courses": "คอร์สเรียน",
+        "feature.courses.desc": "คอร์สเรียนวิชาคอมพิวเตอร์ครบทุกทักษะ เหมาะสำหรับผู้เรียนทุกระดับ",
+        "feature.paths": "เส้นทางการเรียนรู้",
+        "feature.paths.desc": "แผนการเรียนที่วางไว้อย่างเป็นระบบ เพื่อพาคุณจากผู้เริ่มต้นสู่มืออาชีพ",
+        "feature.community": "แพ็คเกจสมาชิก",
+        "feature.community.desc": "เลือกแพลน Free / Plus / Pro เพื่อปลดล็อกคอร์สเรียน และสิทธิพิเศษที่เหมาะกับคุณ",
+
+        // Recommended
+        "rec.title": "บทความแนะนำ",
+        "rec.viewAll": "ดูทั้งหมด",
+        "rec.beginner": "ระดับเริ่มต้น",
+        "rec.intermediate": "ระดับเชี่ยวชาญ",
+        "rec.advanced": "ระดับมืออาชีพ",
+        "rec.min": "นาที",
+        "rec.lastUpdated": "อัพเดทล่าสุด",
+
+        // CTA
+        "cta.title": "พร้อมเริ่มต้นเรียนรู้วิชาคอมพิวเตอร์แล้วหรือยัง?",
+        "cta.desc": "เปลี่ยนความชอบด้านคอมพิวเตอร์ให้เป็นทักษะสร้างอนาคต เรียนรู้ด้วยคอร์สเรียนคุณภาพ ลงมือทำจริง และคำแนะนำจากผู้สอนมืออาชีพจาก F1RSTCODE DEMY",
+        "cta.button": "เริ่มต้นเรียนรู้ฟรี",
+
+        // Auth
+        "auth.createAccount": "สร้างบัญชี",
+        "auth.name": "ชื่อ",
+        "auth.email": "อีเมล",
+        "auth.password": "รหัสผ่าน",
+        "auth.confirmPassword": "ยืนยันรหัสผ่าน",
+        "auth.submit": "สร้างบัญชี",
+        "auth.loginSubmit": "เข้าสู่ระบบ",
+        "auth.haveAccount": "มีบัญชีอยู่แล้ว?",
+        "auth.noAccount": "ยังไม่มีบัญชี?",
+        "auth.forgotPassword": "ลืมรหัสผ่าน?",
+        "auth.placeholder.name": "กรุณากรอกชื่อผู้ใช้",
+        "auth.placeholder.email": "กรุณากรอกอีเมล",
+        "auth.placeholder.password": "กรุณากรอกรหัสผ่าน (มากกว่า 6 ตัวอักษร)",
+        "auth.placeholder.confirmPassword": "กรุณายืนยันรหัสผ่าน",
+        "auth.error.nameRequired": "กรุณากรอกชื่อผู้ใช้",
+        "auth.error.emailRequired": "กรุณากรอกอีเมล",
+        "auth.error.emailInvalid": "กรุณากรอกอีเมลให้ถูกต้อง",
+        "auth.error.passwordRequired": "กรุณากรอกรหัสผ่าน",
+        "auth.error.passwordTooShort": "รหัสผ่านต้องมากกว่า 6 ตัวอักษร",
+        "auth.error.confirmPasswordRequired": "กรุณายืนยันรหัสผ่าน",
+        "auth.error.passwordMismatch": "รหัสผ่านไม่ตรงกัน",
+        "auth.rememberMe": "จำฉันไว้",
+
+        // Footer
+        "footer.desc": "แพลตฟอร์มการเรียนรู้ออนไลน์ระดับพรีเมี่ยมสำหรับผู้เรียนแห่งอนาคต เก่งให้สุดและสร้างสรรค์สิ่งใหม่ไปกับ F1RSTCODE DEMY",
+        "footer.learn": "เรียนรู้",
+        "footer.free": "คอร์สฟรี",
+        "footer.plus": "คอร์สพลัส",
+        "footer.pro": "คอร์สโปร",
+        "footer.support": "ช่วยเหลือ",
+        "footer.faq": "คำถามที่พบบ่อย",
+        "footer.contact": "ติดต่อเรา",
+        "footer.terms": "เงื่อนไขการให้บริการ",
+        "footer.privacy": "นโยบายความเป็นส่วนตัว",
+        "footer.connect": "ติดตามเรา",
+        "footer.subscribe": "สมัครรับข่าวสาร",
+        "footer.rights": "สงวนลิขสิทธิ์",
+        "footer.madeWith": "สร้างโดย KRU'F1RSTz",
+
+        // Order Status
+        "order.title": "ตรวจสอบสถานะคำสั่งซื้อ",
+        "order.subtitle": "ตรวจสอบสถานะและประวัติการสั่งซื้อของคุณ",
+        "order.orderId": "คำสั่งซื้อ",
+        "order.date": "วันที่",
+        "order.status": "สถานะ",
+        "order.total": "รวม",
+        "order.actions": "เลือกคำสั่ง",
+        "order.items": "รายการ",
+        "order.item": "รายการ",
+        "order.viewDetails": "ดูรายละเอียด",
+        "order.notifyPayment": "แจ้งชำระเงิน",
+        "order.pendingPayment": "รอแจ้งชำระเงิน",
+        "order.completed": "จัดส่งแล้ว",
+        "order.processing": "กำลังดำเนินการ",
+        "order.cancelled": "ยกเลิก",
+
+        // Payment
+        "payment.title": "แจ้งชำระเงินค่าบริการ",
+        "payment.formTitle": "แจ้งชำระเงิน",
+        "payment.name": "ชื่อ",
+        "payment.phone": "เบอร์โทรศัพท์",
+        "payment.email": "อีเมล",
+        "payment.orderId": "เลขที่คำสั่งซื้อ",
+        "payment.amount": "จำนวนเงิน",
+        "payment.details": "รายละเอียดคำสั่งซื้อ",
+        "payment.detailsPlaceholder": "รายละเอียดเพิ่มเติม (ถ้ามี)",
+        "payment.bank": "บัญชีธนาคาร",
+        "payment.ktb": "ธนาคารกรุงไทย",
+        "payment.promptpay": "ชำระผ่านพร้อมเพย์",
+        "payment.accountNo": "เลขที่บัญชี:",
+        "payment.slip": "สลิปโอนเงิน",
+        "payment.uploadClick": "คลิกเพื่ออัพโหลด",
+        "payment.uploadDrag": "หรือลากไฟล์มาวาง",
+        "payment.date": "วันโอนเงิน",
+        "payment.time": "เวลา",
+        "payment.submit": "แจ้งชำระเงิน",
+        "payment.channelTitle": "ช่องทางการชำระเงิน",
+        "payment.channelDesc": "สามารถชำระเงินได้โดยการโอนเงินผ่านทางธนาคาร หรือสแกน QR Code พร้อมเพย์ เมื่อชำระเรียบร้อยแล้ว กรุณาแนบสลิปเพื่อเป็นหลักฐาน",
+        "payment.bankChannel": "การชำระเงินผ่านช่องทางธนาคาร",
+        "payment.promptpayChannel": "การชำระเงินผ่าน PromptPay",
+        "payment.scanQR": "สแกน QR Code เพื่อชำระเงิน",
+        "payment.promptpayNo": "หมายเลขสำหรับการชำระบริการผ่านระบบ PromptPay :",
+        "payment.warning": "*ไม่รับชำระเงินผ่าน True Money Wallet โดยโปรแกรมจะเช็คยอดไม่ตรงตามที่เป็นการทำรายการโอนไม่ได้",
+
+        // Profile
+        "profile.title": "การตั้งค่าบัญชี",
+        "profile.subtitle": "จัดการข้อมูลส่วนตัวและความปลอดภัยของบัญชีคุณ",
+        "profile.publicInfo": "ข้อมูลส่วนตัว",
+        "profile.publicInfoDesc": "ข้อมูลที่แสดงบนโปรไฟล์ของคุณ",
+        "profile.email": "อีเมล (ไม่สามารถเปลี่ยนได้)",
+        "profile.displayName": "ชื่อที่แสดง",
+        "profile.membershipStatus": "สถานะสมาชิก",
+        "profile.role": "บทบาท",
+        "profile.changePassword": "เปลี่ยนรหัสผ่าน",
+        "profile.changePasswordDesc": "อัปเดตรหัสผ่านของคุณเพื่อความปลอดภัย (เว้นว่างหากไม่ต้องการเปลี่ยน)",
+        "profile.currentPassword": "รหัสผ่านปัจจุบัน",
+        "profile.newPassword": "รหัสผ่านใหม่",
+        "profile.confirmPassword": "ยืนยันรหัสผ่านใหม่",
+        "profile.saveChanges": "บันทึกการเปลี่ยนแปลง",
+        "profile.cancel": "ยกเลิก",
+        "profile.saving": "กำลังบันทึก...",
+        "profile.saveSuccess": "บันทึกข้อมูลเรียบร้อยแล้ว!",
+        "profile.imageHint": "รองรับไฟล์ JPG, PNG\nขนาดไม่เกิน 5MB",
+
+        // Class Center
+        "class.header.title": "ห้องเรียนของฉัน",
+        "class.header.subtitle": "เข้าสู่บทเรียนในคอร์สที่คุณได้ลงทะเบียนไว้",
+        "class.search.placeholder": "ค้นหาคอร์สของคุณ...",
+        "class.search.button": "ค้นหาคอร์ส",
+        "class.search.clear": "ล้างการค้นหา",
+        "class.tabs.all": "ทั้งหมด",
+        "class.tabs.learning": "กำลังเรียน",
+        "class.tabs.notStarted": "ยังไม่ได้เรียน",
+        "class.tabs.expired": "คอร์สเรียนหมดอายุแล้ว",
+        "class.card.lessons": "บทเรียน",
+        "class.card.timeLeft": "เวลาเรียนคงเหลือ",
+        "class.card.totalTime": "เวลาที่เรียนทั้งหมด",
+        "class.card.expiry": "หมดอายุ",
+        "class.btn.start": "เรียนต่อ",
+        "class.btn.renew": "ต่ออายุ",
+        "class.card.progress": "ความคืบหน้า",
+        "class.unit.hours": "ชม.",
+
+        // Classroom
+        "classroom.back": "กลับไปหน้าห้องเรียน",
+        "classroom.admin": "Admin Management",
+        "classroom.prev": "บทเรียนก่อนหน้า",
+        "classroom.next": "บทเรียนถัดไป",
+        "classroom.markComplete": "ทำเครื่องหมายว่าจบ",
+        "classroom.completed": "เรียนจบแล้ว",
+        "classroom.details": "รายละเอียดบทเรียน",
+        "classroom.progress.title": "ความคืบหน้า",
+        "classroom.progress.completed": "บทเรียนที่เรียนจบ",
+        "classroom.progress.timeLeft": "เวลาที่เหลือ",
+        "classroom.curriculum.title": "เนื้อหาบทเรียน",
+        "classroom.ask": "ปรึกษาถาม - ตอบโจทย์",
+    }
+};
+
+export function LanguageProvider({ children }: { children: React.ReactNode }) {
+    const [language, setLanguage] = useState<Language>("TH");
+
+    const t = (key: string) => {
+        return translations[language][key] || key;
+    };
+
+    return (
+        <LanguageContext.Provider value={{ language, setLanguage, t }}>
+            {children}
+        </LanguageContext.Provider>
+    );
+}
+
+export function useLanguage() {
+    const context = useContext(LanguageContext);
+    if (context === undefined) {
+        throw new Error("useLanguage must be used within a LanguageProvider");
+    }
+    return context;
+}

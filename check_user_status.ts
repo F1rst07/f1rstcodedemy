@@ -1,0 +1,1 @@
+import { prisma } from './src/lib/prisma'; async function main() { const u = await prisma.user.findUnique({ where: { email: 'pee061228@gmail.com' } }); console.log(u ? 'User exists' : 'User does not exist'); } main();

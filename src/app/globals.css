@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+@theme {
+  /* Amber / Gold-Orange Palette */
+  --color-gold-100: #fff8e1;
+  --color-gold-200: #ffecb3;
+  --color-gold-300: #ffe082;
+  --color-gold-400: #ffca28;
+  /* Golden Yellow */
+  --color-gold-500: #ffc107;
+  /* Amber / Base Gold */
+  --color-gold-600: #ffb300;
+  --color-gold-700: #ffa000;
+  /* Gold-Orange */
+  --color-gold-800: #ff8f00;
+  --color-gold-900: #ff6f00;
+
+  /* Deep Red / Crimson Palette */
+  --color-crimson-500: #dc143c;
+  --color-crimson-600: #c90e32;
+  --color-crimson-700: #b00a2a;
+  --color-crimson-800: #960723;
+  --color-crimson-900: #7a041c;
+  /* Deep Red / Wine */
+
+  /* Base System Colors */
+  --color-wine-black: #1a0505;
+  /* Dark Crimson / Wine Black */
+  --color-wine-dark: #120303;
+  /* Darker shade for cards */
+
+  --color-background: var(--color-wine-black);
+  --color-foreground: #fafafa;
+
+  --color-muted: #2d0a0a;
+  --color-muted-foreground: #d1a3a3;
+
+  --color-card: var(--color-wine-dark);
+  --color-card-foreground: #fafafa;
+
+  --color-border: #4a1010;
+
+  --font-sans: var(--font-outfit);
+}
+
+@utility container {
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+
+@utility text-glow {
+  text-shadow: 0 0 20px rgba(255, 193, 7, 0.5);
+}
+
+:root {
+  --background: #1a0505;
+  /* Wine Black */
+  --foreground: #fafafa;
+}
+
+body {
+  background-color: #000000;
+  color: var(--foreground);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a0505;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4a1010;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ffb300;
+}
