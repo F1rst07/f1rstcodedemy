@@ -5,14 +5,26 @@ import { motion } from "framer-motion";
 import { PlayCircle, ArrowRight, Sparkles } from "lucide-react";
 import { useLanguage } from "@/lib/language-context";
 import Image from "next/image";
-import { FeatureCards } from "@/components/home/feature-cards";
-import { RecommendedLessons } from "@/components/home/recommended-lessons";
-import { BottomCTA } from "@/components/home/bottom-cta";
+import dynamic from "next/dynamic";
 import { RegisterModal } from "@/components/auth/register-modal";
-
 import { LoginModal } from "@/components/auth/login-modal";
 import { TypewriterText } from "@/components/ui/typewriter-text";
 import { useState } from "react";
+
+// Dynamic imports for below-the-fold components (lazy load)
+const FeatureCards = dynamic(() => import("@/components/home/feature-cards").then(mod => ({ default: mod.FeatureCards })), {
+  loading: () => <div className="h-96 bg-black" />,
+});
+const RecommendedLessons = dynamic(() => import("@/components/home/recommended-lessons").then(mod => ({ default: mod.RecommendedLessons })), {
+  loading: () => <div className="h-96 bg-black" />,
+});
+const BottomCTA = dynamic(() => import("@/components/home/bottom-cta").then(mod => ({ default: mod.BottomCTA })), {
+  loading: () => <div className="h-64 bg-black" />,
+});
+
+// Blur placeholder for hero image (tiny base64 placeholder)
+const heroBlurDataURL = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMCwsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAgIBAwQDAAAAAAAAAAAAAQIDBBEABRIGITFBUWFx/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAZEQADAQEBAAAAAAAAAAAAAAAAAQIDESH/2gAMAwEAAhEDEEA/AKPTu5bxt+3TWa8yxzSO8jlY1kbJC44FsEDj7HuftIDAEeD+Y0aNKlnyf//Z";
+
 
 
 export default function Home() {
@@ -45,6 +57,9 @@ export default function Home() {
             className="object-cover"
             style={{ objectPosition: "center 35%" }}
             priority
+            placeholder="blur"
+            blurDataURL={heroBlurDataURL}
+            sizes="100vw"
           />
           {/* Dark Overlay */}
           <div className="absolute inset-0 bg-black/85" />
