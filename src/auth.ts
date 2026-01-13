@@ -55,7 +55,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     id: user.id,
                     name: user.name,
                     email: user.email,
-                    // FIX: Map Base64 image to API URL immediately with cache busting
+                    // Use API URL for images to prevent large cookies
                     image: (user.image && user.image.startsWith("data:"))
                         ? `/api/user/avatar/${user.id}?v=${user.updatedAt.getTime()}`
                         : user.image,
@@ -74,49 +74,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 return { ...token, ...session.user };
             }
 
-            // Initial login
+            // Initial login - store all data in token
             if (user) {
                 token.role = (user as any).role;
                 token.plan = (user as any).plan;
                 token.id = user.id;
+                token.name = user.name;
+                token.email = user.email;
+                // Store image URL (not base64) in token
+                token.image = (user as any).image;
+                token.picture = (user as any).image;
             }
 
-            // Always fetch fresh data to ensure we don't have stale large cookies
-            // and to guarantee we use the API URL for images
-            if (token.sub) {
-                try {
-                    const freshUser = await prisma.user.findUnique({
-                        where: { id: token.sub },
-                        select: {
-                            name: true,
-                            email: true,
-                            role: true,
-                            plan: true,
-                            image: true,
-                            updatedAt: true
-                        }
-                    });
+            // NO MORE DATABASE QUERIES HERE - use cached token data
+            // This dramatically improves performance
 
-                    if (freshUser) {
-                        token.name = freshUser.name;
-                        token.email = freshUser.email;
-                        token.role = freshUser.role;
-                        token.plan = freshUser.plan;
-
-                        // CRITICAL FIX: NEVER store Base64 in token. ALWAYS use API URL for images.
-                        // This prevents HTTP 431 Request Header Fields Too Large
-                        if (freshUser.image && freshUser.image.startsWith("data:")) {
-                            token.picture = `/api/user/avatar/${token.sub}?v=${freshUser.updatedAt.getTime()}`;
-                            token.image = `/api/user/avatar/${token.sub}?v=${freshUser.updatedAt.getTime()}`;
-                        } else {
-                            token.picture = freshUser.image;
-                            token.image = freshUser.image;
-                        }
-                    }
-                } catch (error) {
-                    console.error("Error refreshing user data in JWT:", error);
-                }
-            }
             return token;
         },
         async session({ session, token }) {
@@ -136,6 +108,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         maxAge: 30 * 24 * 60 * 60, // 30 days
     },
     pages: {
-        signIn: "/", // We use a modal, but redirecting to home is fine if something goes wrong
+        signIn: "/",
     },
 })
