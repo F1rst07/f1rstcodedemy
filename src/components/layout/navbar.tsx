@@ -79,8 +79,8 @@ export function Navbar() {
                     </span>
                 </Link>
 
-                {/* Desktop Menu */}
-                <div className="hidden md:flex items-center gap-8">
+                {/* Desktop Menu - show on lg and up (iPad portrait uses mobile menu) */}
+                <div className="hidden lg:flex items-center gap-6 xl:gap-8">
                     {[
                         "home",
                         "membership",
@@ -291,7 +291,7 @@ export function Navbar() {
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="md:hidden text-white"
+                        className="lg:hidden text-white"
                         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                     >
                         <Menu className="w-6 h-6" />
@@ -303,7 +303,7 @@ export function Navbar() {
             {
                 mobileMenuOpen && (
                     <div
-                        className="md:hidden absolute top-full left-0 right-0 max-h-[calc(100vh-4rem)] overflow-y-auto bg-black/95 backdrop-blur-md border-t border-white/10 p-4 animate-fade-in-up"
+                        className="lg:hidden absolute top-full left-0 right-0 max-h-[calc(100vh-4rem)] overflow-y-auto bg-black/95 backdrop-blur-md border-t border-white/10 p-4 animate-fade-in-up"
                     >
                         <div className="flex flex-col landscape:grid landscape:grid-cols-2 gap-3 sm:gap-4">
                             <div className="flex flex-col gap-2">
