@@ -13,28 +13,17 @@ const isLibSQL = url.startsWith("libsql:") || url.startsWith("https:") || url.st
 export const prisma =
     globalForPrisma.prisma ||
     (() => {
-        if (isLibSQL) {
-            // Pass config object directly as required by this adapter version
-            const adapter = new PrismaLibSql({
-                url,
-                authToken,
-            });
-            return new PrismaClient({
-                adapter,
-                log: ["query"],
-            });
-        } else {
-            // Local SQLite Fallback
-            // Use datasources to override the empty schema configuration
-            return new PrismaClient({
-                datasources: {
-                    db: {
-                        url,
-                    },
-                },
-                log: ["query"],
-            } as any);
-        }
+        // Always use the adapter, as the generated client expects it.
+        // The adapter supports 'file:' protocol for local SQLite.
+        const adapter = new PrismaLibSql({
+            url: url,
+            authToken: authToken || "", // Handle missing auth token gracefully if url is local
+        });
+
+        return new PrismaClient({
+            adapter,
+            log: ["query"],
+        });
     })();
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
