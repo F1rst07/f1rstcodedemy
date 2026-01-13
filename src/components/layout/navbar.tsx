@@ -64,8 +64,8 @@ export function Navbar() {
         >
             <div className={`max-w-7xl mx-auto flex items-center justify-between transition-all duration-300 ${scrolled ? "h-16" : "h-20"}`}>
                 {/* Logo */}
-                <Link href="/" className="flex items-center gap-3 group">
-                    <div className="relative w-10 h-10 group-hover:scale-110 transition-transform duration-300 drop-shadow-[0_0_15px_rgba(255,160,0,0.4)]">
+                <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
+                    <div className="relative w-8 h-8 sm:w-10 sm:h-10 group-hover:scale-110 transition-transform duration-300 drop-shadow-[0_0_15px_rgba(255,160,0,0.4)]">
                         <Image
                             src="/logo.png"
                             alt="F1RSTCODE DEMY Logo"
@@ -74,8 +74,8 @@ export function Navbar() {
                             priority
                         />
                     </div>
-                    <span className="font-bold text-xl tracking-wide text-white group-hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.3)] transition-all">
-                        F1RST<span className="text-gold-400">CODE</span> <span className="text-crimson-500 ml-1 drop-shadow-[0_0_8px_rgba(220,38,38,0.8)]">DEMY</span>
+                    <span className="font-bold text-sm xs:text-base sm:text-lg md:text-xl tracking-wide text-white group-hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.3)] transition-all">
+                        F1RST<span className="text-gold-400">CODE</span> <span className="text-crimson-500 ml-0.5 sm:ml-1 drop-shadow-[0_0_8px_rgba(220,38,38,0.8)]">DEMY</span>
                     </span>
                 </Link>
 
