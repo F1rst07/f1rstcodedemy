@@ -83,7 +83,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 token.email = user.email;
                 // Store image URL (not base64) in token
                 token.image = (user as any).image;
-                token.picture = (user as any).image;
+                // token.picture = (user as any).image; // Removed to save space
             }
 
             // NO MORE DATABASE QUERIES HERE - use cached token data
