@@ -7,14 +7,16 @@ export async function middleware(request: NextRequest) {
 
     // Protect admin routes
     if (pathname.startsWith("/admin")) {
-        // Not logged in -> redirect to home
+        // Not logged in -> redirect to home with debug
         if (!token) {
-            return NextResponse.redirect(new URL("/", request.url));
+            return NextResponse.redirect(new URL("/?error=no_token", request.url));
         }
 
-        // Not admin -> redirect to home
-        if (token.role !== "ADMIN") {
-            return NextResponse.redirect(new URL("/", request.url));
+        // Not admin -> redirect to home with debug
+        // Ensure case-insensitive check
+        const role = String(token.role || "").toUpperCase();
+        if (role !== "ADMIN") {
+            return NextResponse.redirect(new URL(`/?error=role_mismatch_${role}`, request.url));
         }
     }
 
