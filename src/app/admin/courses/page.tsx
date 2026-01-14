@@ -74,7 +74,7 @@ export default function CoursesPage() {
     }, []);
 
     return (
-        <div className="p-6 max-w-7xl mx-auto text-white">
+        <div className="py-6 text-white">
             <div className="flex items-center justify-between mb-8">
                 <h1 className="text-3xl font-bold text-gray-100">Course Manager</h1>
                 <div className="flex gap-3">
@@ -82,7 +82,7 @@ export default function CoursesPage() {
                         <PlusCircle className="w-4 h-4 mr-2" />
                         Create Course
                     </Button>
-                    <Button onClick={handleSeed} variant="outline" className="text-black border-white/20 hover:bg-white/10">
+                    <Button onClick={handleSeed} variant="outline" className="text-white border-white/20 hover:bg-white/10">
                         {courses.length === 0 ? "Initialize Demo Data" : "Refresh Data"}
                     </Button>
                 </div>
@@ -105,12 +105,12 @@ export default function CoursesPage() {
                                     value={newCourseTitle}
                                     onChange={(e) => setNewCourseTitle(e.target.value)}
                                     placeholder="Enter course title..."
-                                    className="bg-black border-white/10 focus:border-gold-500"
+                                    className="bg-black border-white/10 focus:border-gold-500 text-white"
                                     onKeyDown={(e) => e.key === 'Enter' && handleCreateCourse()}
                                 />
                             </div>
                             <div className="flex justify-end gap-3">
-                                <Button variant="ghost" onClick={() => setShowCreateModal(false)}>Cancel</Button>
+                                <Button variant="ghost" onClick={() => setShowCreateModal(false)} className="text-gray-300 hover:text-white hover:bg-white/10">Cancel</Button>
                                 <Button onClick={handleCreateCourse} disabled={isCreating || !newCourseTitle.trim()} className="bg-gold-500 hover:bg-gold-400 text-black">
                                     {isCreating ? <Loader2 className="w-4 h-4 animate-spin" /> : "Create"}
                                 </Button>
@@ -127,7 +127,7 @@ export default function CoursesPage() {
                     {courses.map((course) => (
                         <div key={course.id} className="bg-[#161616] border border-white/10 rounded-xl p-6 hover:border-gold-500/50 transition-all group">
                             <div className="flex items-start justify-between mb-2">
-                                <h2 className="text-xl font-bold truncate flex-1">{course.title}</h2>
+                                <h2 className="text-xl font-bold truncate flex-1 text-white">{course.title}</h2>
                                 <button
                                     onClick={() => handleDeleteCourse(course.id)}
                                     className="text-gray-500 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity ml-2"
@@ -140,7 +140,7 @@ export default function CoursesPage() {
                                 {course.chapters.reduce((acc, ch) => acc + ch.lessons.length, 0)} Lessons
                             </p>
                             <Link href={`/admin/courses/${course.id}`}>
-                                <Button className="w-full bg-white/5 hover:bg-gold-500 hover:text-black transition-colors border border-white/10">
+                                <Button className="w-full bg-white/5 hover:bg-gold-500 hover:text-black transition-colors border border-white/10 text-white hover:font-bold">
                                     <Edit className="w-4 h-4 mr-2" />
                                     Manage Content
                                 </Button>
@@ -149,8 +149,17 @@ export default function CoursesPage() {
                     ))}
 
                     {courses.length === 0 && (
-                        <div className="col-span-full text-center py-20 text-gray-500 border border-dashed border-white/10 rounded-xl">
-                            No courses found. Click "Initialize Demo Data" or "Create Course" to start.
+                        <div className="col-span-full flex flex-col items-center justify-center py-20 text-gray-500 border border-dashed border-white/10 rounded-xl space-y-4">
+                            <p>No courses found. Click "Initialize Demo Data" or "Create Course" to start.</p>
+                            <div className="flex gap-4">
+                                <Button onClick={() => setShowCreateModal(true)} className="bg-gold-500 hover:bg-gold-400 text-black">
+                                    <PlusCircle className="w-4 h-4 mr-2" />
+                                    Create Course
+                                </Button>
+                                <Button onClick={handleSeed} variant="outline" className="text-white border-white/20 hover:bg-white/10">
+                                    Initialize Demo Data
+                                </Button>
+                            </div>
                         </div>
                     )}
                 </div>

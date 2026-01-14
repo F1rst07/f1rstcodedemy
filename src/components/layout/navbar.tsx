@@ -18,6 +18,7 @@ import { LoginModal } from "@/components/auth/login-modal";
 // Removed framer-motion - using CSS transitions instead
 
 import { useLanguage } from "@/lib/language-context";
+import { useCart } from "@/context/cart-context";
 
 export function Navbar() {
     const { language, setLanguage, t } = useLanguage();
@@ -83,12 +84,12 @@ export function Navbar() {
                 <div className="hidden lg:flex items-center gap-6 xl:gap-8">
                     {[
                         "home",
-                        "membership",
+                        "articles",
                         "courses",
                         ...(session ? ["classcenter"] : []),
                         ...((session?.user as any)?.role === 'ADMIN' ? ["admin"] : [])
                     ].map((item) => {
-                        const href = item === "home" ? "/" : item === "admin" ? "/admin/courses" : `/${item}`;
+                        const href = item === "home" ? "/" : item === "admin" ? "/admin" : `/${item}`;
                         const isActive = pathname === href || (item === "admin" && pathname.startsWith("/admin"));
 
                         return (
@@ -100,7 +101,7 @@ export function Navbar() {
                                 {item === "admin" ? (
                                     <>
                                         <Crown className="w-4 h-4 text-gold-500" />
-                                        <span>Admin</span>
+                                        <span>{language === 'TH' ? "ผู้ดูแลระบบ" : "ADMIN"}</span>
                                     </>
                                 ) : (
                                     t(`nav.${item}`)
@@ -134,14 +135,8 @@ export function Navbar() {
                         </DropdownMenuContent>
                     </DropdownMenu>
 
-                    {/* Shopping Cart - Only show when logged in */}
-                    {session && (
-                        <Link href="/cart">
-                            <Button variant="ghost" size="icon" className="text-gray-300 hover:text-white">
-                                <ShoppingCart className="w-5 h-5" />
-                            </Button>
-                        </Link>
-                    )}
+                    {/* Shopping Cart - Show only for logged in users */}
+                    {session && <CartIcon />}
 
 
 
@@ -309,12 +304,12 @@ export function Navbar() {
                             <div className="flex flex-col gap-2">
                                 {[
                                     "home",
-                                    "membership",
+                                    "articles",
                                     "courses",
                                     ...(session ? ["classcenter"] : []),
                                     ...((session?.user as any)?.role === 'ADMIN' ? ["admin"] : [])
                                 ].map((item) => {
-                                    const href = item === "home" ? "/" : item === "admin" ? "/admin/courses" : `/${item}`;
+                                    const href = item === "home" ? "/" : item === "admin" ? "/admin" : `/${item}`;
                                     const isActive = pathname === href || (item === "admin" && pathname.startsWith("/admin"));
                                     return (
                                         <Link
@@ -329,7 +324,7 @@ export function Navbar() {
                                             {item === "admin" ? (
                                                 <>
                                                     <Crown className="w-4 h-4 text-gold-500" />
-                                                    <span>Admin</span>
+                                                    <span>{language === 'TH' ? "ผู้ดูแลระบบ" : "ADMIN"}</span>
                                                 </>
                                             ) : (
                                                 t(`nav.${item}`)
@@ -396,6 +391,22 @@ function NavLink({ href, children, active }: { href: string; children: React.Rea
             {active && (
                 <span className="absolute -bottom-8 left-0 right-0 h-1 bg-gradient-to-r from-gold-400 to-crimson-600 rounded-t-full shadow-[0_-2px_10px_rgba(255,179,0,0.5)]" />
             )}
+        </Link>
+    );
+}
+
+function CartIcon() {
+    const { items } = useCart();
+    return (
+        <Link href="/cart">
+            <Button variant="ghost" size="icon" className="text-gray-300 hover:text-white relative">
+                <ShoppingCart className="w-5 h-5" />
+                {items.length > 0 && (
+                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-600 rounded-full text-[10px] flex items-center justify-center text-white font-bold border border-black">
+                        {items.length}
+                    </span>
+                )}
+            </Button>
         </Link>
     )
 }

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Search, X } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { useLanguage } from "@/lib/language-context";
@@ -75,7 +76,36 @@ export default function ClassroomPage() {
     const [activeTab, setActiveTab] = useState<'all' | 'learning' | 'notStarted' | 'expired'>('all');
     const [searchQuery, setSearchQuery] = useState("");
 
-    const filteredCourses = MOCK_COURSES.filter(course => {
+    // Real Data State
+    const [courses, setCourses] = useState<Course[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    const { data: session } = useSession();
+
+    useEffect(() => {
+        const fetchEnrolledCourses = async () => {
+            if (!session?.user) {
+                setIsLoading(false);
+                return;
+            }
+
+            try {
+                const res = await fetch("/api/user/enrolled-courses");
+                if (res.ok) {
+                    const data = await res.json();
+                    setCourses(data);
+                }
+            } catch (error) {
+                console.error("Failed to fetch enrolled courses", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchEnrolledCourses();
+    }, [session]);
+
+    const filteredCourses = courses.filter(course => {
         // Filter by Tab
         if (activeTab !== 'all' && course.status !== activeTab) return false;
 
@@ -83,16 +113,18 @@ export default function ClassroomPage() {
         if (searchQuery && !course.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
 
         return true;
-    }).sort((a, b) => {
-        // 1. Expired courses go to bottom
-        if (a.status === 'expired' && b.status !== 'expired') return 1;
-        if (a.status !== 'expired' && b.status === 'expired') return -1;
-
-        // 2. Sort by Expiry Date (Ascending - closer date first)
-        const dateA = new Date(a.expiryDate).getTime();
-        const dateB = new Date(b.expiryDate).getTime();
-        return dateA - dateB;
     });
+
+    if (!session) {
+        return (
+            <div className="min-h-screen bg-[#0a0a0a] pt-24 pb-12 px-4 flex items-center justify-center">
+                <div className="text-center">
+                    <h1 className="text-2xl font-bold text-white mb-2">Please Login</h1>
+                    <p className="text-gray-400">You need to be logged in to access your classroom.</p>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className="min-h-screen bg-[#0a0a0a] pt-24 pb-12 px-4 sm:px-6 lg:px-8 font-sans selection:bg-gold-500/30">
@@ -137,7 +169,6 @@ export default function ClassroomPage() {
                                 {t("class.search.button")}
                             </Button>
 
-                            {/* Show clear button always but disabled if empty, or conditionally render. Logic kept as requested. */}
                             <Button
                                 className={`flex-1 md:flex-none font-bold h-12 px-6 rounded-lg min-w-[120px] transition-colors ${searchQuery
                                     ? "bg-crimson-600 hover:bg-crimson-700 text-white"
@@ -153,7 +184,11 @@ export default function ClassroomPage() {
                 </div>
 
                 {/* Course Grid */}
-                {filteredCourses.length > 0 ? (
+                {isLoading ? (
+                    <div className="flex justify-center p-20">
+                        <div className="animate-spin w-10 h-10 border-t-2 border-gold-500 rounded-full"></div>
+                    </div>
+                ) : filteredCourses.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {filteredCourses.map(course => (
                             <CourseCard key={course.id} course={course} />
@@ -165,16 +200,13 @@ export default function ClassroomPage() {
                             <Search className="w-8 h-8 text-gray-500" />
                         </div>
                         <h3 className="text-xl font-bold text-white mb-2">No courses found</h3>
-                        <p className="text-gray-400">Try adjusting your search or filter to find what you're looking for.</p>
+                        <p className="text-gray-400">You haven't enrolled in any courses yet.</p>
                         <Button
                             variant="link"
                             className="text-gold-500 mt-2"
-                            onClick={() => {
-                                setActiveTab('all');
-                                setSearchQuery("");
-                            }}
+                            onClick={() => window.location.href = "/courses"}
                         >
-                            Clear all filters
+                            Browse Courses
                         </Button>
                     </div>
                 )}

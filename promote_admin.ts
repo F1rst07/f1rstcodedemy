@@ -1,28 +1,13 @@
+
 import "dotenv/config";
-import { PrismaClient } from "@prisma/client";
-import { PrismaLibSql } from "@prisma/adapter-libsql";
-
-const url = process.env.TURSO_DATABASE_URL || process.env.DATABASE_URL || "file:./prisma/dev.db";
-const authToken = process.env.TURSO_AUTH_TOKEN;
-const isLibSQL = url.startsWith("libsql:") || url.startsWith("https:") || url.startsWith("http:");
-
-let prisma: PrismaClient;
-
-if (isLibSQL) {
-    const adapter = new PrismaLibSql({ url, authToken });
-    prisma = new PrismaClient({ adapter });
-} else {
-    prisma = new PrismaClient({
-        datasources: {
-            db: { url }
-        }
-    } as any);
-}
+import { prisma } from "./src/lib/prisma";
 
 async function main() {
     // Check both lowercase and exact case to be sure
     const targets = ["phiraphat061228@gmail.com", "Phiraphat061228@gmail.com"];
     let updated = false;
+
+    console.log("Checking for users...");
 
     for (const email of targets) {
         const user = await prisma.user.findUnique({ where: { email } });
@@ -35,14 +20,25 @@ async function main() {
             });
             console.log(`✅ Successfully promoted ${email} to ADMIN`);
             updated = true;
-            // Stop after finding one match, assuming unique email constraint handles overlap logic closely enough or user only registered once
             break;
         }
     }
 
     if (!updated) {
         console.log("⚠️ User not found. Please double check the email used for registration.");
+
+        // List all users to help debugging
+        const allUsers = await prisma.user.findMany({ select: { email: true, role: true } });
+        console.log("Existing users in DB:", allUsers);
     }
 }
 
-main();
+main()
+    .then(async () => {
+        await prisma.$disconnect()
+    })
+    .catch(async (e) => {
+        console.error(e)
+        await prisma.$disconnect()
+        process.exit(1)
+    })

@@ -67,3 +67,23 @@ export async function DELETE(
         return new NextResponse("Internal Error", { status: 500 });
     }
 }
+
+export async function PATCH(
+    req: Request,
+    { params }: { params: Promise<{ courseId: string }> }
+) {
+    try {
+        const { courseId } = await params;
+        const values = await req.json();
+
+        const course = await prisma.course.update({
+            where: { id: courseId },
+            data: { ...values }
+        });
+
+        return NextResponse.json(course);
+    } catch (error) {
+        console.error("[COURSE_PATCH]", error);
+        return new NextResponse("Internal Error", { status: 500 });
+    }
+}

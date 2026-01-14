@@ -13,7 +13,8 @@ import { useState } from "react";
 const FeatureCards = dynamic(() => import("@/components/home/feature-cards").then(mod => ({ default: mod.FeatureCards })), {
   loading: () => <div className="h-96 bg-black" />,
 });
-const RecommendedLessons = dynamic(() => import("@/components/home/recommended-lessons").then(mod => ({ default: mod.RecommendedLessons })), {
+
+const LatestArticles = dynamic(() => import("@/components/home/latest-articles").then(mod => ({ default: mod.LatestArticles })), {
   loading: () => <div className="h-96 bg-black" />,
 });
 const BottomCTA = dynamic(() => import("@/components/home/bottom-cta").then(mod => ({ default: mod.BottomCTA })), {
@@ -129,7 +130,8 @@ export default function Home() {
 
       {/* Content Sections */}
       <FeatureCards />
-      <RecommendedLessons />
+
+      <LatestArticles />
       <BottomCTA />
 
     </main>

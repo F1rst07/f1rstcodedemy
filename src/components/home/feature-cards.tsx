@@ -26,29 +26,31 @@ export function FeatureCards() {
     ];
 
     return (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 sm:-mt-16 md:-mt-20 relative z-20">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                {features.map((feature, index) => (
-                    <motion.div
-                        key={index}
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: index * 0.1 }}
-                        whileHover={{ y: -5 }}
-                        className="bg-zinc-900/80 backdrop-blur-md border border-white/10 p-6 sm:p-8 rounded-xl sm:rounded-2xl hover:border-gold-500/50 hover:bg-zinc-900/90 transition-all group"
-                    >
-                        <div className="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center mb-6 group-hover:bg-gold-500 group-hover:text-black transition-colors text-gold-400">
-                            <feature.icon className="w-6 h-6" />
-                        </div>
-                        <h3 className="text-xl font-bold text-white mb-3 group-hover:text-gold-400 transition-colors">
-                            {feature.title}
-                        </h3>
-                        <p className="text-white/60 leading-relaxed">
-                            {feature.desc}
-                        </p>
-                    </motion.div>
-                ))}
+        <section className="px-4 -mt-10 sm:-mt-16 md:-mt-20 relative z-20">
+            <div className="max-w-7xl mx-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 items-start">
+                    {features.map((feature, index) => (
+                        <motion.div
+                            key={index}
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: index * 0.1 }}
+                            whileHover={{ y: -5 }}
+                            className="bg-zinc-900/80 backdrop-blur-md border border-white/10 p-5 sm:p-6 rounded-xl sm:rounded-2xl hover:border-gold-500/50 hover:bg-zinc-900/90 transition-all group"
+                        >
+                            <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center mb-4 group-hover:bg-gold-500 group-hover:text-black transition-colors text-gold-400">
+                                <feature.icon className="w-5 h-5" />
+                            </div>
+                            <h3 className="text-lg font-bold text-white mb-2 group-hover:text-gold-400 transition-colors">
+                                {feature.title}
+                            </h3>
+                            <p className="text-white/60 leading-relaxed text-sm">
+                                {feature.desc}
+                            </p>
+                        </motion.div>
+                    ))}
+                </div>
             </div>
         </section>
     );

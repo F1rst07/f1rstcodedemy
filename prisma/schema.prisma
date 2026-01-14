@@ -10,13 +10,17 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  name      String?
-  email     String?  @unique
-  password  String?
-  image     String?
-  role      String   @default("STUDENT")
-  plan      String   @default("Free")
+  id       String  @id @default(cuid())
+  name     String?
+  email    String? @unique
+  password String?
+  image    String?
+  role     String  @default("STUDENT")
+  plan     String  @default("Free")
+
+  orders    Order[]
+  purchases Purchase[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -30,9 +34,13 @@ model Course {
   price       Float?
   isPublished Boolean @default(false)
 
-  chapters  Chapter[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  chapters   Chapter[]
+  purchases  Purchase[]
+  orders     Order[]
+  orderItems OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Chapter {
@@ -90,4 +98,92 @@ model UserProgress {
 
   @@unique([userId, lessonId])
   @@index([lessonId])
+}
+
+model Purchase {
+  id       String @id @default(cuid())
+  userId   String
+  courseId String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+
+  @@unique([userId, courseId])
+  @@index([courseId])
+}
+
+model Coupon {
+  id              String @id @default(cuid())
+  code            String @unique
+  discountAmount  Float?
+  discountPercent Float?
+
+  maxUses     Int?
+  currentUses Int  @default(0)
+
+  isActive  Boolean   @default(true)
+  expiresAt DateTime?
+
+  orders Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id     String @id @default(cuid())
+  userId String
+
+  total   Float
+  status  String  @default("PENDING") // PENDING, COMPLETED, CANCELLED
+  slipUrl String?
+
+  couponId String?
+  coupon   Coupon? @relation(fields: [couponId], references: [id])
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Legacy support (optional now)
+  courseId String?
+  course   Course? @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  items OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([courseId])
+}
+
+model OrderItem {
+  id String @id @default(cuid())
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  courseId String
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  price Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([courseId])
+}
+
+model Article {
+  id          String  @id @default(cuid())
+  title       String
+  content     String
+  imageUrl    String?
+  isPublished Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

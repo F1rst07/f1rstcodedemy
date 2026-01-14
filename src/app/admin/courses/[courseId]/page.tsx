@@ -24,6 +24,10 @@ interface Chapter {
 interface Course {
     id: string;
     title: string;
+    description: string | null;
+    price: number | null;
+    isPublished: boolean;
+    imageUrl: string | null;
     chapters: Chapter[];
 }
 
@@ -140,6 +144,22 @@ export default function CourseEditorPage() {
         }
     };
 
+    const handleUpdateCourse = async (values: Partial<Course>) => {
+        setIsSaving(true);
+        try {
+            await fetch(`/api/courses/${params.courseId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(values)
+            });
+            await fetchCourse();
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
     const handleDeleteLesson = async (lessonId: string) => {
         if (!confirm("Delete this lesson?")) return;
         try {
@@ -160,11 +180,81 @@ export default function CourseEditorPage() {
             </Button>
 
             <div className="flex items-center justify-between mb-8">
-                <h1 className="text-3xl font-bold">{course.title}</h1>
-                <div className="text-sm text-gray-400 border border-white/10 px-3 py-1 rounded bg-white/5">
-                    Course ID: {course.id}
+                <div className="flex flex-col gap-1">
+                    <h1 className="text-3xl font-bold">{course.title}</h1>
+                    <div className="flex items-center gap-4 text-sm text-gray-400">
+                        <span>ID: {course.id}</span>
+                        <span className={course.isPublished ? "text-green-500" : "text-yellow-500"}>
+                            {course.isPublished ? "Published" : "Draft"}
+                        </span>
+                    </div>
+                </div>
+                <div className="flex gap-3">
+                    <Button
+                        onClick={() => handleUpdateCourse({ isPublished: !course.isPublished })}
+                        variant={course.isPublished ? "destructive" : "default"}
+                        className={course.isPublished ? "bg-red-500/10 text-red-500 hover:bg-red-500/20" : "bg-green-600 hover:bg-green-700 text-white"}
+                    >
+                        {course.isPublished ? "Unpublish" : "Publish Course"}
+                    </Button>
                 </div>
             </div>
+
+            {/* Course Metadata Form */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div className="bg-[#161616] border border-white/10 rounded-xl p-6 space-y-4">
+                    <h3 className="font-bold text-lg border-b border-white/10 pb-2 mb-4">Course Details</h3>
+                    <div>
+                        <label className="text-sm text-gray-400 mb-1 block">Title</label>
+                        <Input
+                            defaultValue={course.title}
+                            onBlur={(e) => handleUpdateCourse({ title: e.target.value })}
+                            className="bg-black border-white/10 text-white"
+                        />
+                    </div>
+                    <div>
+                        <label className="text-sm text-gray-400 mb-1 block">Description</label>
+                        <textarea
+                            defaultValue={course.description || ""}
+                            onBlur={(e) => handleUpdateCourse({ description: e.target.value })}
+                            className="w-full bg-black border border-white/10 rounded-md p-2 text-white min-h-[100px]"
+                        />
+                    </div>
+                    <div>
+                        <label className="text-sm text-gray-400 mb-1 block">Price (THB)</label>
+                        <Input
+                            type="number"
+                            defaultValue={course.price || 0}
+                            onBlur={(e) => handleUpdateCourse({ price: parseFloat(e.target.value) })}
+                            className="bg-black border-white/10 text-white"
+                        />
+                    </div>
+                    <div>
+                        <label className="text-sm text-gray-400 mb-1 block">Cover Image URL</label>
+                        <div className="flex gap-2">
+                            <Input
+                                defaultValue={course.imageUrl || ""}
+                                onBlur={(e) => handleUpdateCourse({ imageUrl: e.target.value })}
+                                className="bg-black border-white/10 text-white flex-1"
+                                placeholder="http://..."
+                            />
+                        </div>
+                    </div>
+                </div>
+                {/* Preview Image */}
+                <div className="bg-[#161616] border border-white/10 rounded-xl p-6 flex flex-col items-center justify-center min-h-[300px]">
+                    {course.imageUrl ? (
+                        <img src={course.imageUrl} alt="Cover" className="w-full h-full object-cover rounded-lg" />
+                    ) : (
+                        <div className="text-gray-500 flex flex-col items-center">
+                            <UploadCloud className="w-12 h-12 mb-2 opacity-50" />
+                            <p>No Cover Image</p>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            <h3 className="font-bold text-2xl mb-4">Course Content</h3>
 
             <div className="space-y-6">
                 {course.chapters.map((chapter) => (

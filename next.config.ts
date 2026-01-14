@@ -26,7 +26,7 @@ const nextConfig: NextConfig = {
 
   // Experimental features for faster loading
   experimental: {
-    optimizeCss: true, // Optimize CSS
+    // optimizeCss: true, // Optimize CSS (Requires 'critters' package)
   },
 
   // Headers for caching static assets

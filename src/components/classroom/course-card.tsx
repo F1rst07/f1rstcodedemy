@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Clock, Calendar, FileText, CheckCircle2 } from "lucide-react";
+import { Clock, Calendar, FileText, CheckCircle2, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/lib/language-context";
 import { formatDate } from "@/lib/utils";
@@ -26,21 +26,28 @@ interface CourseCardProps {
 export function CourseCard({ course }: CourseCardProps) {
     const { t, language } = useLanguage();
 
-    const percentage = Math.round((course.completedLessons / course.lessons) * 100);
+    const percentage = course.lessons > 0 ? Math.round((course.completedLessons / course.lessons) * 100) : 0;
     const isExpired = course.status === 'expired';
 
     const CardContent = (
         <div className={`bg-[#161616] border border-white/10 rounded-xl overflow-hidden hover:border-gold-500/50 transition-all duration-300 group flex flex-col h-full ${isExpired ? 'opacity-75 grayscale' : ''}`}>
             {/* Image Section */}
-            <div className="relative h-48 w-full bg-gray-900 shrink-0">
-                <Image
-                    src={course.image}
-                    alt={course.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+            <div className="relative h-48 w-full bg-gray-900 shrink-0 flex items-center justify-center overflow-hidden">
+                {course.image ? (
+                    <Image
+                        src={course.image}
+                        alt={course.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                ) : (
+                    <div className="flex flex-col items-center justify-center text-gray-600">
+                        <BookOpen className="w-12 h-12 opacity-50 mb-2" />
+                    </div>
+                )}
+
                 {!isExpired && (
-                    <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded-md border border-white/10 flex items-center gap-1">
+                    <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded-md border border-white/10 flex items-center gap-1 z-10">
                         <span className="text-gold-400 font-bold text-sm">{percentage}%</span>
                     </div>
                 )}
